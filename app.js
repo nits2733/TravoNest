@@ -19,6 +19,8 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
+app.enable('trust proxy');
+
 // Set Pug as the template (view) engine
 app.set('view engine', 'pug');
 // Set the directory where the Pug templates (views) are stored

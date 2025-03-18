@@ -48,3 +48,10 @@ process.on('unhandledRejection', (err) => {
     process.exit(1); // Exit the application with a non-zero status code (1 indicates failure)
   });
 });
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received. Shutting down gracefully...');
+  server.close(() => {
+    console.log('Process Terminated!');
+  });
+});
