@@ -8,6 +8,7 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -25,6 +26,11 @@ app.enable('trust proxy');
 app.set('view engine', 'pug');
 // Set the directory where the Pug templates (views) are stored
 app.set('views', path.join(__dirname, 'views'));
+
+//Implement CORS
+app.use(cors());
+
+app.options('*', cors());
 
 // Global Middlewares
 // Serve static files (e.g., HTML, CSS, JS, images) from the 'public' folder
