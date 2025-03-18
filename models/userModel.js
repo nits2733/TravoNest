@@ -106,7 +106,7 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
     );
 
     // Log timestamps for debugging
-    console.log(changedTimestamp, JWTTimestamp);
+    // console.log(changedTimestamp, JWTTimestamp);
 
     // Compare JWT issuance time with password change time
     // If the JWT was issued before the password was changed, return true (i.e., password was changed after login)
@@ -128,7 +128,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .update(resetToken)
     .digest('hex');
 
-  console.log({ resetToken }, this.passwordResetToken);
+  // console.log({ resetToken }, this.passwordResetToken);
 
   // 3) Set token expiration time (current time + 10 minutes)
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes

@@ -184,10 +184,10 @@ tourSchema.pre(/^find/, function (next) {
 });
 
 //Query Middleware- Post-find hook to run after the query has been executed
-tourSchema.post('find', function (docs, next) {
-  // console.log(docs.length);
-  next(); // Call the next middleware in the chain
-});
+// tourSchema.post('find', function (docs, next) {
+//   // console.log(docs.length);
+//   next(); // Call the next middleware in the chain
+// });
 
 //Aggregation Middleware
 // tourSchema.pre('aggregate', function (next) {

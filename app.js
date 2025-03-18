@@ -7,6 +7,7 @@ const mongosanitize = require('express-mongo-sanitize');
 const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
+const compression = require('compression');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -70,6 +71,8 @@ app.use(
     ],
   })
 );
+
+app.use(compression());
 
 // Middleware to add a custom property 'requestTime' to the request object
 //Test Middleware

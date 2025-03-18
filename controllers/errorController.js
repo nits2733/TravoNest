@@ -9,7 +9,6 @@ const handleCastErrorDB = (err) => {
 // Handle duplicate fields error in MongoDB (e.g., unique constraint violations)
 const handleDuplicateFieldsDB = (err) => {
   const value = err.keyValue ? JSON.stringify(err.keyValue) : 'Unknown field';
-  console.log(value);
 
   const message = `Duplicate field value: ${value}. Please use another value!`;
   return new AppError(message, 400);
