@@ -20,7 +20,7 @@ const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
 
-app.enable('trust proxy');
+app.set('trust proxy', 1);
 
 // Set Pug as the template (view) engine
 app.set('view engine', 'pug');

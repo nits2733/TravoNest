@@ -21,6 +21,17 @@ const cspHeader =
   'upgrade-insecure-requests; ' +
   "connect-src 'self' ws://127.0.0.1:* https://*.mapbox.com;";
 
+// New landing page controller
+exports.getLandingPage = catchAsync(async (req, res) => {
+  // Get a few tours to display on the landing page
+  const tours = await Tour.find().limit(6);
+
+  res.status(200).set('Content-Security-Policy', cspHeader).render('landing', {
+    title: 'Explore the World',
+    tours,
+  });
+});
+
 exports.getOverview = catchAsync(async (req, res) => {
   // 1) Get tour data from collection
   const tours = await Tour.find();

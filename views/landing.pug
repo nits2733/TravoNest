@@ -1,0 +1,156 @@
+extends base
+
+block content
+  // Hero Section
+  section.section-hero
+    .hero__overlay
+    .hero__content
+      h1.hero__title Discover the World with 
+        span.hero__title-highlight TravoNest
+      p.hero__subtitle Unforgettable adventures await. Explore breathtaking destinations with our expert guides. Embark on a journey that ignites your sense of wonder and transforms your travel dreams into lasting memories.
+      .hero__cta
+        a.btn.btn--white(href='/') Explore Tours
+        a.btn.btn--green(href='/signup') Join Now
+
+  // Features Section
+  section.section-features
+    .container
+      h2.section-title Why Choose TravoNest
+      .features__grid
+        .feature-card
+          .feature-card__icon
+            svg.feature-card__icon-svg
+              use(xlink:href='/img/icons.svg#icon-map-pin')
+          h3.feature-card__title Handpicked Destinations
+          p.feature-card__text Our experts carefully select the most breathtaking and authentic locations around the world.
+        
+        .feature-card
+          .feature-card__icon
+            svg.feature-card__icon-svg
+              use(xlink:href='/img/icons.svg#icon-user')
+          h3.feature-card__title Expert Guides
+          p.feature-card__text Travel with knowledgeable guides who bring each destination to life with local insights.
+        
+        .feature-card
+          .feature-card__icon
+            svg.feature-card__icon-svg
+              use(xlink:href='/img/icons.svg#icon-calendar')
+          h3.feature-card__title Flexible Scheduling
+          p.feature-card__text Choose from a variety of tour dates to find the perfect time for your adventure.
+
+  // Popular Tours Section
+  section.section-popular-tours
+    .container
+      h2.section-title Popular Tours
+      .popular-tours__slider
+        //- Fallback tours in case no tours data is available
+        - const defaultTours = [{ name: 'The Forest Hiker', imageCover: 'tour-1-cover.jpg', startLocation: { description: 'Banff, Canada' }, startDates: [new Date()], locations: [1, 2, 3], slug: 'the-forest-hiker' }, { name: 'The Sea Explorer', imageCover: 'tour-2-cover.jpg', startLocation: { description: 'Miami, USA' }, startDates: [new Date()], locations: [1, 2], slug: 'the-sea-explorer' }, { name: 'The Snow Adventurer', imageCover: 'tour-3-cover.jpg', startLocation: { description: 'Aspen, USA' }, startDates: [new Date()], locations: [1, 2, 3, 4], slug: 'the-snow-adventurer' }]
+        - const toursToDisplay = tours && tours.length ? tours.slice(0, 3) : defaultTours
+        each tour in toursToDisplay
+          .popular-tour-card
+            .popular-tour-card__image
+              img(src=`/img/tours/${tour.imageCover}` alt=`${tour.name}`)
+            .popular-tour-card__overlay
+            .popular-tour-card__content
+              h3.popular-tour-card__title= tour.name
+              p.popular-tour-card__location
+                svg.popular-tour-card__icon
+                  use(xlink:href='/img/icons.svg#icon-map-pin')
+                span= tour.startLocation.description
+              .popular-tour-card__details
+                .popular-tour-card__detail
+                  svg.popular-tour-card__icon
+                    use(xlink:href='/img/icons.svg#icon-calendar')
+                  span= tour.startDates[0].toLocaleString('en-us', {month: 'short', year: 'numeric'})
+                .popular-tour-card__detail
+                  svg.popular-tour-card__icon
+                    use(xlink:href='/img/icons.svg#icon-flag')
+                  span= `${tour.locations.length} stops`
+              a.btn.btn--small.popular-tour-card__btn(href=`/tour/${tour.slug}`) View Details
+
+  // Testimonials Section
+  section.section-testimonials
+    .container
+      h2.section-title What Our Travelers Say
+      .testimonials__grid
+        .testimonial
+          .testimonial__content
+            p.testimonial__text "The tour exceeded all my expectations. The guides were knowledgeable and the destinations were breathtaking."
+          .testimonial__author
+            img.testimonial__author-img(src="/img/users/user-9.jpg" alt="Jane Doe")
+            .testimonial__author-info
+              h4.testimonial__author-name Jane Doe
+              p.testimonial__author-tour The Forest Hiker Tour
+        
+        .testimonial
+          .testimonial__content
+            p.testimonial__text "TravoNest made our family vacation unforgettable. The attention to detail and personalized service was outstanding."
+          .testimonial__author
+            img.testimonial__author-img(src="/img/users/user-8.jpg" alt="Lily Smith")
+            .testimonial__author-info
+              h4.testimonial__author-name Lily Smith
+              p.testimonial__author-tour The Sea Explorer Tour
+
+  // CTA Section
+  section.section-cta
+    .container
+      .cta-box
+        .cta-box__content
+          h2.cta-box__title Ready for Your Next Adventure?
+          p.cta-box__text Join thousands of satisfied travelers who have experienced the world with TravoNest.
+        .cta-box__actions
+          a.btn.btn--white(href='/') Browse Tours
+          a.btn.btn--green(href='/signup') Sign Up Now
+
+  // Newsletter Section
+  section.section-newsletter
+    .container
+      .newsletter__content
+        h2.section-title Stay Updated
+        p.newsletter__text Subscribe to our newsletter for exclusive deals and travel tips.
+        form.newsletter__form
+          input.newsletter__input(type="email" placeholder="Your email address" required)
+          button.btn.btn--green.newsletter__btn(type="submit") Subscribe
+
+          
+
+  script.
+    document.addEventListener('DOMContentLoaded', function() {
+      // Add animation classes immediately to make sections visible
+      const elements = document.querySelectorAll('.feature-card, .popular-tour-card, .testimonial');
+      elements.forEach(element => {
+        element.classList.add('animate');
+      });
+      
+      // Newsletter form submission
+      const newsletterForm = document.querySelector('.newsletter__form');
+      if (newsletterForm) {
+        newsletterForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const email = this.querySelector('input[type="email"]').value;
+          
+          // Here you would typically send this to your backend
+          // For now, just show an alert
+          alert(`Thank you for subscribing with ${email}! You'll receive our latest updates soon.`);
+          this.reset();
+        });
+      }
+
+      // Add animation classes when new elements come into view
+      const animateOnScroll = function() {
+        const elements = document.querySelectorAll('.feature-card:not(.animate), .popular-tour-card:not(.animate), .testimonial:not(.animate)');
+        
+        elements.forEach(element => {
+          const elementPosition = element.getBoundingClientRect().top;
+          const screenPosition = window.innerHeight / 1.3;
+          
+          if (elementPosition < screenPosition) {
+            element.classList.add('animate');
+          }
+        });
+      };
+
+      window.addEventListener('scroll', animateOnScroll);
+      // Initial check
+      animateOnScroll();
+    });
