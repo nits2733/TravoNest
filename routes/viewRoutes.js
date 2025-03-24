@@ -5,35 +5,16 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
 
-// Add this new route for the landing page
+// Always redirect to landing page
+router.get('/', (req, res) => {
+  res.redirect('/landing');
+});
+
+// Landing page route
 router.get(
   '/landing',
   authController.isLoggedIn,
   viewsController.getLandingPage
-);
-
-// Modify the root route to redirect to the landing page for new visitors
-// or to the overview page for returning visitors (using a cookie)
-router.get(
-  '/',
-  (req, res, next) => {
-    // Check if user has visited before
-    if (req.cookies.visited) {
-      // User has visited before, proceed to overview
-      next();
-    } else {
-      // Set a cookie to remember the visit
-      res.cookie('visited', 'true', {
-        expires: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
-        httpOnly: true,
-      });
-      // Redirect to landing page
-      res.redirect('/landing');
-    }
-  },
-  bookingController.createBookingCheckout,
-  authController.isLoggedIn,
-  viewsController.getOverview
 );
 
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
