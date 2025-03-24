@@ -5,18 +5,16 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
 
-// Always redirect to landing page
-router.get('/', (req, res) => {
-  res.redirect('/landing');
-});
+router.get('/', viewsController.getLandingPage);
 
-// Landing page route
+router.get('/landing', viewsController.getLandingPage);
+
 router.get(
-  '/landing',
+  '/overview',
+  bookingController.createBookingCheckout,
   authController.isLoggedIn,
-  viewsController.getLandingPage
+  viewsController.getOverview
 );
-
 router.get('/tour/:slug', authController.isLoggedIn, viewsController.getTour);
 router.get('/login', authController.isLoggedIn, viewsController.getLoginForm);
 router.get('/signup', authController.isLoggedIn, viewsController.getSignupForm);
