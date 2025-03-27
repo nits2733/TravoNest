@@ -5,9 +5,13 @@ const bookingController = require('../controllers/bookingController');
 
 const router = express.Router();
 
-router.get('/', viewsController.getLandingPage);
+router.get('/', authController.isLoggedIn, viewsController.getLandingPage);
 
-router.get('/landing', viewsController.getLandingPage);
+router.get(
+  '/landing',
+  authController.isLoggedIn,
+  viewsController.getLandingPage
+);
 
 router.get(
   '/overview',

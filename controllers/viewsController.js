@@ -23,6 +23,7 @@ const cspHeader =
 
 // New landing page controller
 exports.getLandingPage = catchAsync(async (req, res) => {
+  // console.log('User:', res.locals.user);
   // Get a few tours to display on the landing page
   const tours = await Tour.find().limit(6);
 
