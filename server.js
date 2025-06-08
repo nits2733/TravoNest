@@ -1,57 +1,83 @@
+// server.js
 const mongoose = require('mongoose');
-const dotenv = require('dotenv'); // loads environment variables from a .env file into process.env
+const dotenv = require('dotenv');
 
-// Listen for any uncaught exceptions in the Node.js process
-process.on('uncaughtException', (err) => {
-  console.log('UNHANDLED EXCEPTION! 💥 Shutting down');
-  console.log(err.name, err.message);
-  // Close the server gracefully before exiting
-  server.close(() => {
-    console.log('Server is closing down...');
-    process.exit(1); // Exit the application with a non-zero status code (1 indicates failure)
-  });
-});
+// --------------------------------------------------------------------------------
+// 1. LOAD ENVIRONMENT VARIABLES
+//    If Render (or any host) has already injected a PORT, we assume we’re in “production.”
+//
+//    Otherwise (i.e. `process.env.PORT` is falsy), load from ./config.env.
+// --------------------------------------------------------------------------------
 
-dotenv.config({ path: './config.env' }); // Load environment variables from config.env file located in the root directory (or a specified relative path)
-// console.log('NODE_ENV:', process.env.NODE_ENV);
+if (!process.env.PORT) {
+  // No PORT yet—probably running locally, so read from config.env
+  dotenv.config({ path: './config.env' });
+  console.log('☁️  Loaded config.env → PORT =', process.env.PORT);
+} else {
+  // PORT was already set (e.g. Render injected it), so skip dotenv entirely
+  console.log('⚙️  Detected production environment – skipping dotenv');
+}
+
+// --------------------------------------------------------------------------------
+// 2. NOW WE CAN LOG WHAT PORT WE’LL BIND TO
+// --------------------------------------------------------------------------------
+
+console.log('🔥 Startup: process.env.PORT =', process.env.PORT);
+
+// --------------------------------------------------------------------------------
+// 3. SET UP MONGOOSE & EXPRESS
+// --------------------------------------------------------------------------------
+
 const app = require('./app');
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
-  process.env.DATABASE_PASSWORD //Use the password stored in environment variables
+  process.env.DATABASE_PASSWORD
 );
 
-// Connect to MongoDB using Mongoose with specified options
 mongoose
   .connect(DB, {
-    useNewUrlParser: true, // Use the new URL parser (recommended for modern MongoDB versions)
-    useCreateIndex: true,
+    useNewUrlParser: true,
     useUnifiedTopology: true,
-    useFindAndModify: false,
-    ssl: true, // Enable SSL for secure connections
-    sslValidate: true, // Validate the server's SSL certificate
   })
-  .then(() => console.log('DB Connection Successful'));
+  .then(() => {
+    console.log('DB Connection Successful 💾');
 
-const port = process.env.PORT || 8000;
-const server = app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+    const port = process.env.PORT || 8000;
+    console.log(`🔥 About to bind Express on port ${port}…`);
+    const server = app.listen(port, () => {
+      console.log(`✅ Server is running on port ${port}`);
+    });
 
-// Listening for unhandled promise rejections globally - node.js knows by name
-process.on('unhandledRejection', (err) => {
-  console.log('UNHANDLED REJECTION! 💥 Shutting down');
-  console.log(err.name, err.message);
-  // Close the server gracefully before exiting
-  server.close(() => {
-    console.log('Server is closing down...');
-    process.exit(1); // Exit the application with a non-zero status code (1 indicates failure)
+    // --------------------------------------------------------------------------
+    // 4. GLOBAL ERROR HANDLERS
+    // --------------------------------------------------------------------------
+    process.on('uncaughtException', (err) => {
+      console.log('UNHANDLED EXCEPTION! 💥 Shutting down');
+      console.log(err.name, err.message);
+      server.close(() => {
+        console.log('Server closed due to uncaught exception.');
+        process.exit(1);
+      });
+    });
+
+    process.on('unhandledRejection', (err) => {
+      console.log('UNHANDLED REJECTION! 💥 Shutting down');
+      console.log(err.name, err.message);
+      server.close(() => {
+        console.log('Server closed due to unhandled promise rejection.');
+        process.exit(1);
+      });
+    });
+
+    process.on('SIGTERM', () => {
+      console.log('SIGTERM signal received. Shutting down gracefully...');
+      server.close(() => {
+        console.log('Process terminated!');
+      });
+    });
+  })
+  .catch((err) => {
+    console.error('❌ DB Connection failed:', err);
+    process.exit(1);
   });
-});
-
-process.on('SIGTERM', () => {
-  console.log('SIGTERM signal received. Shutting down gracefully...');
-  server.close(() => {
-    console.log('Process Terminated!');
-  });
-});
